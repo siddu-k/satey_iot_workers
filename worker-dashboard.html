@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATEY - Worker Safety Dashboard</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Worker Dashboard Specific Styles */
+        .worker-dashboard-body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .worker-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .worker-sidebar {
+            width: 320px;
+            background: #0a0a0a;
+            border-right: 1px solid #222;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .worker-header {
+            padding: 20px;
+            border-bottom: 1px solid #222;
+            background: #111;
+        }
+
+        .worker-header h1 {
+            font-size: 20px;
+            margin: 0;
+            color: #ff4444;
+        }
+
+        .worker-header p {
+            font-size: 12px;
+            color: #888;
+            margin: 5px 0 0 0;
+        }
+
+        .alert-stats {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            border-bottom: 1px solid #222;
+        }
+
+        .alert-stat-card {
+            flex: 1;
+            background: #1a1a1a;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #2a2a2a;
+        }
+
+        .alert-stat-card .stat-label {
+            font-size: 10px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .alert-stat-card .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4ade80;
+            margin-top: 5px;
+        }
+
+        .alert-stat-card.critical .stat-value {
+            color: #ff4444;
+        }
+
+        .active-alerts-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 15px 0;
+        }
+
+        .section-header {
+            padding: 0 20px 10px 20px;
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .alerts-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 10px;
+        }
+
+        .alert-item {
+            margin: 0 10px 10px 10px;
+            padding: 15px;
+            background: #1a1a1a;
+            border-left: 4px solid #ff4444;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #2a2a2a;
+        }
+
+        .alert-item:hover {
+            background: #222;
+            border-left-color: #ff6666;
+        }
+
+        .alert-item.acknowledged {
+            border-left-color: #ffaa00;
+            opacity: 0.7;
+        }
+
+        .alert-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .alert-worker-name {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .alert-status-badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            background: #ff4444;
+            color: #fff;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .alert-status-badge.acknowledged {
+            background: #ffaa00;
+        }
+
+        .alert-item-details {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        .alert-item-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 6px 10px;
+            font-size: 11px;
+            border: 1px solid #2a2a2a;
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .action-btn:hover {
+            background: #2a2a2a;
+        }
+
+        .action-btn.resolve {
+            background: #4ade80;
+            color: #000;
+            border-color: #4ade80;
+        }
+
+        .action-btn.resolve:hover {
+            background: #22c55e;
+        }
+
+        .action-btn.ack {
+            background: #ffaa00;
+            color: #000;
+            border-color: #ffaa00;
+        }
+
+        .action-btn.ack:hover {
+            background: #ffc233;
+        }
+
+        .worker-map-container {
+            flex: 1;
+            background: #111;
+            position: relative;
+        }
+
+        .map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .alert-popup {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #2a2a2a;
+            max-width: 250px;
+        }
+
+        .alert-popup h3 {
+            margin: 0 0 10px 0;
+            color: #ff4444;
+        }
+
+        .alert-popup p {
+            margin: 5px 0;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* Scrollbar Styling */
+        .alerts-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .alerts-container::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .alerts-container::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 3px;
+        }
+
+        .alerts-container::-webkit-scrollbar-thumb:hover {
+            background: #3a3a3a;
+        }
+
+        /* Device Status Styles */
+        .devices-container {
+            flex: 0 0 auto;
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 0 10px;
+            border-top: 1px solid #2a2a2a;
+            border-bottom: 1px solid #2a2a2a;
+            margin-bottom: 10px;
+        }
+
+        .device-item {
+            margin: 0 0 8px 0;
+            padding: 12px;
+            background: #1a1a1a;
+            border-left: 4px solid #22c55e;
+            border-radius: 6px;
+            curve: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #2a2a2a;
+            font-size: 12px;
+        }
+
+        .device-item.offline {
+            border-left-color: #666;
+            opacity: 0.6;
+            background: #141414;
+        }
+
+        .device-item:hover {
+            background: #222;
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .device-name {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .device-status-badge {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background: #22c55e;
+            color: #000;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .device-status-badge.offline {
+            background: #666;
+            color: #fff;
+        }
+
+        .device-info {
+            font-size: 11px;
+            color: #aaa;
+            line-height: 1.4;
+        }
+
+        .device-info-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 2px 0;
+        }
+    </style>
+</head>
+
+<body class="worker-dashboard-body">
+    <div class="worker-container">
+        <!-- Sidebar -->
+        <aside class="worker-sidebar">
+            <!-- Header -->
+            <div class="worker-header">
+                <h1>🚨 Worker Safety</h1>
+                <p>Real-time SOS Alerts</p>
+            </div>
+
+            <!-- Statistics -->
+            <div class="alert-stats">
+                <div class="alert-stat-card critical">
+                    <div class="stat-label">Active</div>
+                    <div class="stat-value" id="activeCount">0</div>
+                </div>
+                <div class="alert-stat-card">
+                    <div class="stat-label">Device</div>
+                    <div class="stat-value" id="deviceCount">0</div>
+                </div>
+                <div class="alert-stat-card">
+                    <div class="stat-label">Total</div>
+                    <div class="stat-value" id="totalCount">0</div>
+                </div>
+            </div>
+
+            <!-- Active Alerts Section -->
+            <div class="active-alerts-section">
+                <div class="section-header">� Connected Devices</div>
+                <div class="devices-container" id="devicesContainer">
+                    <div class="empty-state" style="padding: 20px 10px; font-size: 12px;">
+                        <p>No devices connected</p>
+                    </div>
+                </div>
+
+                <div class="section-header">�📍 Active Alerts</div>
+                <div class="alerts-container" id="alertsContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✓</div>
+                        <p>All workers safe. Waiting for alerts...</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Map Container -->
+        <main class="worker-map-container">
+            <div class="map" id="workerMap"></div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const SERVER_URL = `ws://${window.location.hostname}:3000`;
+
+        // ===== STATE =====
+        let allAlerts = [];
+        let allDevices = [];
+        let map;
+        let markers = {};
+        let ws = null;
+
+        // ===== INITIALIZE =====
+        function init() {
+            console.log('🚀 Worker Safety Dashboard Initializing...');
+            initMap();
+            connectWebSocket();
+        }
+
+        // ===== MAP SETUP =====
+        function initMap() {
+            map = L.map('workerMap', {
+                center: [20.5937, 78.9629],
+                zoom: 5,
+                maxZoom: 22
+            });
+
+            const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                maxZoom: 22,
+                maxNativeZoom: 20,
+                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                attribution: 'Google'
+            });
+
+            googleSat.addTo(map);
+
+            console.log('✅ Map Initialized');
+        }
+
+        // ===== WEBSOCKET CONNECTION =====
+        function connectWebSocket() {
+            ws = new WebSocket(SERVER_URL);
+
+            ws.onopen = () => {
+                console.log('✅ Connected to Alert Server');
+            };
+
+            ws.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+
+                if (message.type === 'init') {
+                    allAlerts = message.alerts;
+                    allDevices = message.devices || [];
+                    renderAlerts();
+                    renderDevices();
+                    updateMapMarkers();
+                } else if (message.type === 'alert') {
+                    handleNewAlert(message.data);
+                } else if (message.type === 'devices') {
+                    allDevices = message.data || [];
+                    renderDevices();
+                }
+            };
+
+            ws.onerror = (error) => {
+                console.error('❌ WebSocket Error:', error);
+            };
+
+            ws.onclose = () => {
+                console.warn('⚠️  WebSocket Disconnected. Reconnecting in 3s...');
+                setTimeout(connectWebSocket, 3000);
+            };
+        }
+
+        // ===== HANDLE NEW ALERT =====
+        function handleNewAlert(alert) {
+            console.log('🚨 New Alert:', alert);
+
+            // Remove duplicate if exists
+            allAlerts = allAlerts.filter(a => a.worker_id !== alert.worker_id || a.status === 'resolved');
+
+            // Add new alert to top
+            allAlerts.unshift(alert);
+
+            renderAlerts();
+            updateMapMarkers();
+
+            // Play sound notification
+            playNotificationSound();
+        }
+
+        // ===== RENDER ALERTS LIST =====
+        function renderAlerts() {
+            const container = document.getElementById('alertsContainer');
+
+            if (allAlerts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✓</div>
+                        <p>All workers safe. Waiting for alerts...</p>
+                    </div>
+                `;
+                updateStats();
+                return;
+            }
+
+            container.innerHTML = allAlerts.map(alert => `
+                <div class="alert-item ${alert.status}" data-alert-id="${alert.id}" onclick="focusAlertOnMap('${alert.id}')">
+                    <div class="alert-item-header">
+                        <span class="alert-worker-name">${alert.worker_details?.full_name || 'Unknown'}</span>
+                        <span class="alert-status-badge ${alert.status}">${alert.status.toUpperCase()}</span>
+                    </div>
+                    <div class="alert-item-details">
+                        <div>📍 ${alert.latitude?.toFixed(4)}, ${alert.longitude?.toFixed(4)}</div>
+                        <div>📞 ${alert.worker_details?.contact_1 || 'N/A'}</div>
+                        <div>🩸 ${alert.worker_details?.blood_group || 'N/A'}</div>
+                        <div>⏰ ${new Date(alert.timestamp).toLocaleTimeString()}</div>
+                    </div>
+                    <div class="alert-item-actions">
+                        ${alert.status === 'active' ? `<button class="action-btn ack" onclick="acknowledgeAlert('${alert.id}', event)">ACK</button>` : ''}
+                        ${alert.status !== 'resolved' ? `<button class="action-btn resolve" onclick="resolveAlert('${alert.id}', event)">RESOLVE</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            updateStats();
+        }
+
+        // ===== FOCUS ALERT ON MAP =====
+        function focusAlertOnMap(alertId) {
+            const alert = allAlerts.find(a => a.id === alertId);
+            if (!alert || !alert.latitude || !alert.longitude) {
+                return;
+            }
+
+            const lat = Number(alert.latitude);
+            const lng = Number(alert.longitude);
+
+            if (Number.isNaN(lat) || Number.isNaN(lng)) {
+                return;
+            }
+
+            map.flyTo([lat, lng], 22, {
+                animate: true,
+                duration: 1.0
+            });
+
+            const marker = markers[alert.worker_id];
+            if (marker) {
+                setTimeout(() => marker.openPopup(), 300);
+            }
+        }
+
+        // ===== RENDER DEVICES LIST =====
+        function renderDevices() {
+            const container = document.getElementById('devicesContainer');
+
+            if (allDevices.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="padding: 20px 10px; font-size: 12px;">
+                        <p>No devices connected</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = allDevices.map(device => {
+                const isOnline = device.status === 'online';
+                const lastHeartbeat = new Date(device.last_heartbeat);
+                const timeDiff = new Date() - lastHeartbeat;
+                const minutesAgo = Math.floor(timeDiff / 60000);
+                const timeAgo = minutesAgo < 1 ? 'Just now' : `${minutesAgo}m ago`;
+
+                return `
+                    <div class="device-item ${!isOnline ? 'offline' : ''}">
+                        <div class="device-header">
+                            <span class="device-name">📱 ${device.worker_name}</span>
+                            <span class="device-status-badge ${!isOnline ? 'offline' : ''}">${isOnline ? '🟢 ONLINE' : '⚪ OFFLINE'}</span>
+                        </div>
+                        <div class="device-info">
+                            <div class="device-info-line">
+                                <span>📞</span>
+                                <span>${device.contact}</span>
+                            </div>
+                            <div class="device-info-line">
+                                <span>🩸</span>
+                                <span>${device.blood_group}</span>
+                            </div>
+                            <div class="device-info-line">
+                                <span>⏰ Last:</span>
+                                <span>${timeAgo}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== UPDATE MAP MARKERS =====
+        function updateMapMarkers() {
+            // Clear old markers
+            Object.values(markers).forEach(marker => map.removeLayer(marker));
+            markers = {};
+
+            // Add new markers for active alerts
+            allAlerts.forEach(alert => {
+                if (alert.status !== 'resolved' && alert.latitude && alert.longitude) {
+                    const markerColor = alert.status === 'active' ? '#ff4444' : '#ffaa00';
+                    const iconHtml = `
+                        <div style="
+                            background: ${markerColor};
+                            color: white;
+                            width: 32px;
+                            height: 32px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-weight: bold;
+                            font-size: 18px;
+                            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+                        ">
+                            🚨
+                        </div>
+                    `;
+
+                    const customIcon = L.divIcon({
+                        html: iconHtml,
+                        iconSize: [32, 32],
+                        className: 'custom-marker'
+                    });
+
+                    const marker = L.marker([alert.latitude, alert.longitude], { icon: customIcon })
+                        .bindPopup(`
+                            <div class="alert-popup">
+                                <h3>${alert.worker_details?.full_name}</h3>
+                                <p><strong>Status:</strong> ${alert.status}</p>
+                                <p><strong>Contact:</strong> ${alert.worker_details?.contact_1}</p>
+                                <p><strong>Blood Type:</strong> ${alert.worker_details?.blood_group}</p>
+                                <p><strong>Time:</strong> ${new Date(alert.timestamp).toLocaleTimeString()}</p>
+                            </div>
+                        `)
+                        .addTo(map);
+
+                    markers[alert.worker_id] = marker;
+                }
+            });
+        }
+
+        // ===== ACKNOWLEDGE ALERT =====
+        async function acknowledgeAlert(alertId, e) {
+            if (e) {
+                e.stopPropagation();
+            }
+            try {
+                const response = await fetch(`http://${window.location.hostname}:3000/api/worker-alerts/${alertId}/acknowledge`, {
+                    method: 'PUT'
+                });
+                if (response.ok) {
+                    console.log('✅ Alert Acknowledged');
+                }
+            } catch (error) {
+                console.error('Error acknowledging alert:', error);
+            }
+        }
+
+        // ===== RESOLVE ALERT =====
+        async function resolveAlert(alertId, e) {
+            if (e) {
+                e.stopPropagation();
+            }
+            try {
+                const response = await fetch(`http://${window.location.hostname}:3000/api/worker-alerts/${alertId}/resolve`, {
+                    method: 'PUT'
+                });
+                if (response.ok) {
+                    console.log('✅ Alert Resolved');
+                }
+            } catch (error) {
+                console.error('Error resolving alert:', error);
+            }
+        }
+
+        // ===== UPDATE STATISTICS =====
+        function updateStats() {
+            const active = allAlerts.filter(a => a.status === 'active').length;
+            const acked = allAlerts.filter(a => a.status === 'acknowledged').length;
+            const total = allAlerts.length;
+            const onlineDevices = allDevices.filter(d => d.status === 'online').length;
+
+            document.getElementById('activeCount').textContent = active;
+            document.getElementById('deviceCount').textContent = onlineDevices;
+            document.getElementById('totalCount').textContent = total;
+        }
+
+        // ===== NOTIFICATION SOUND =====
+        function playNotificationSound() {
+            // Using Web Audio API to create a beep sound
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        // Start the app
+        init();
+    </script>
+</body>
+
+</html>

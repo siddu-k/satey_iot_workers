@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATEY - Helpline Management</title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo">
+                    <img src="logo.png" alt="SATEY Logo" class="logo-image">
+                    <div class="logo-text">
+                        <h1>SATEY</h1>
+                        <p>Emergency Response System</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav-section">
+                <div class="filter-header">
+                    <span>NAVIGATION</span>
+                </div>
+                <div class="nav-list">
+                    <a href="index.html" class="nav-item">
+                        <span>[HOME]</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="helplines.html" class="nav-item active">
+                        <span>[PHONE]</span>
+                        <span>Helplines</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Helpline Management Section -->
+            <div class="helpline-section">
+                <div class="filter-header">
+                    <span>HELPLINE MANAGEMENT</span>
+                    <button class="reset-btn" id="toggleHelpline">Add New</button>
+                </div>
+                
+                <!-- Add Helpline Form (Hidden by default) -->
+                <div class="helpline-form" id="helplineForm" style="display: none;">
+                    <div style="margin-bottom: 12px;">
+                        <label style="color: #888; font-size: 11px; display: block; margin-bottom: 4px;">NAME</label>
+                        <input type="text" id="helplineName" placeholder="Enter helpline name" style="
+                            width: 100%;
+                            background: #1a1a1a;
+                            border: 1px solid #2a2a2a;
+                            color: #fff;
+                            padding: 8px;
+                            border-radius: 4px;
+                            font-size: 12px;
+                        ">
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <label style="color: #888; font-size: 11px; display: block; margin-bottom: 4px;">PHONE</label>
+                        <input type="text" id="helplineNumber" placeholder="Enter phone number" style="
+                            width: 100%;
+                            background: #1a1a1a;
+                            border: 1px solid #2a2a2a;
+                            color: #fff;
+                            padding: 8px;
+                            border-radius: 4px;
+                            font-size: 12px;
+                        ">
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <label style="color: #888; font-size: 11px; display: block; margin-bottom: 4px;">CATEGORY</label>
+                        <select id="helplineCategory" style="
+                            width: 100%;
+                            background: #1a1a1a;
+                            border: 1px solid #2a2a2a;
+                            color: #fff;
+                            padding: 8px;
+                            border-radius: 4px;
+                            font-size: 12px;
+                        ">
+                            <option value="emergency">Emergency</option>
+                            <option value="medical">Medical</option>
+                            <option value="police">Police</option>
+                            <option value="fire">Fire</option>
+                            <option value="ambulance">Ambulance</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="add-helpline-btn" id="addHelplineBtn">ADD HELPLINE</button>
+                        <button class="cancel-btn" id="cancelHelplineBtn">CANCEL</button>
+                    </div>
+                </div>
+
+                <!-- Helplines List -->
+                <div class="helplines-list" id="helplinesList">
+                    <!-- Helplines will be dynamically added here -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Helpline Management</h1>
+                <p>Manage emergency contact numbers and helplines</p>
+            </div>
+
+            <div class="helplines-grid" id="helplinesGrid">
+                <!-- Helplines will be displayed here in a grid layout -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Custom JS -->
+    <script src="js/supabase.js"></script>
+    <script src="js/helplines.js"></script>
+</body>
+
+</html>

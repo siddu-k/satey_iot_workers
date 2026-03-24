@@ -1,0 +1,8 @@
+Close all VS Code terminals.
+Close VS Code fully.
+Reopen VS Code.
+Open new PowerShell terminal.
+Run:
+node -v
+npm -v
+npm start

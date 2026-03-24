@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATEY - Emergency Profile</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="profile-body">
+    
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>Emergency Profile Viewer</h1>
+            <p>View emergency medical information by providing a user ID</p>
+        </div>
+
+        <div class="profile-input-section">
+            <div class="profile-input">
+                <label>USER ID:</label>
+                <input type="text" id="userIdInput" placeholder="Enter user ID (e.g., 3b32f6c8-5767-49c2-9fcd-48465aa7d8af)">
+                <button class="load-profile-btn" onclick="loadEmergencyProfile()">View Profile</button>
+            </div>
+        </div>
+
+        <div id="profileContent">
+            <div class="loading">Enter a user ID to view their emergency profile.</div>
+        </div>
+    </div>
+
+    <!-- Supabase & Leaflet JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- App Scripts -->
+    <script src="js/supabase.js"></script>
+    <script src="js/map.js"></script>
+
+    <script>
+        let homeMap; // Keep a reference to the map
+
+        // Function to display the user's home location on a map
+        function showHomeOnMap(lat, lon) {
+            // If map already exists, just update view and marker
+            if (homeMap) {
+                homeMap.setView([lat, lon], 16);
+                // Clear existing markers (if any)
+                homeMap.eachLayer(layer => {
+                    if (layer instanceof L.Marker) {
+                        homeMap.removeLayer(layer);
+                    }
+                });
+                L.marker([lat, lon]).addTo(homeMap);
+                return;
+            }
+
+            // Initialize map if it doesn't exist
+            homeMap = L.map('homeMapContainer', {
+                center: [lat, lon],
+                zoom: 16,
+                zoomControl: false,
+                attributionControl: false,
+            });
+
+            // Use the same Google Satellite layer
+            L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                maxZoom: 20,
+                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                attribution: 'Google Satellite'
+            }).addTo(homeMap);
+
+            // Add a marker for the home location
+            L.marker([lat, lon]).addTo(homeMap);
+
+            // Add simple zoom controls
+            L.control.zoom({ position: 'topright' }).addTo(homeMap);
+        }
+
+        async function loadEmergencyProfile() {
+            const userId = document.getElementById('userIdInput').value.trim();
+            const profileContent = document.getElementById('profileContent');
+
+            if (!userId) {
+                profileContent.innerHTML = '<div class="error-message">Please enter a User ID.</div>';
+                return;
+            }
+
+            profileContent.innerHTML = '<div class="loading">Loading emergency profile...</div>';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('emergency_profiles')
+                    .select('*')
+                    .eq('user_id', userId)
+                    .single();
+
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        profileContent.innerHTML = '<div class="error-message">Profile not found for this User ID.</div>';
+                    } else {
+                        profileContent.innerHTML = `<div class="error-message">Error loading profile: ${error.message}</div>`;
+                    }
+                    return;
+                }
+
+                if (data) {
+                    // Render the main profile structure
+                    profileContent.innerHTML = `
+                        <div class="profile-grid">
+                            <div class="profile-main">
+                                <div class="profile-section">
+                                    <h3>Personal Information</h3>
+                                    <div class="profile-field"><label>Full Name</label><div class="profile-field-value">${data.full_name || 'Not provided'}</div></div>
+                                    <div class="profile-field"><label>Email</label><div class="profile-field-value">${data.email || 'Not provided'}</div></div>
+                                    <div class="profile-field"><label>Blood Group</label><div class="profile-field-value">${data.blood_group || 'Not provided'}</div></div>
+                                </div>
+
+                                <div class="profile-section">
+                                    <h3>Medical Information</h3>
+                                    <div class="profile-field"><label>Medical Notes</label><div class="profile-field-value">${data.medical_notes || 'None'}</div></div>
+                                    <div class="profile-field"><label>Allergies</label><div class="profile-field-value">${data.allergies || 'None'}</div></div>
+                                    <div class="profile-field"><label>Medications</label><div class="profile-field-value">${data.medications || 'None'}</div></div>
+                                </div>
+                            </div>
+                            <div class="profile-aside">
+                                <div class="profile-section">
+                                    <h3>Home Location</h3>
+                                    <div id="homeMapContainer"></div>
+                                </div>
+                                <div class="profile-section">
+                                    <h3>Emergency Contacts</h3>
+                                    <div class="contact-item"><strong>Contact 1:</strong> ${data.contact_1 || 'N/A'}</div>
+                                    <div class="contact-item"><strong>Contact 2:</strong> ${data.contact_2 || 'N/A'}</div>
+                                    <div class="contact-item"><strong>Contact 3:</strong> ${data.contact_3 || 'N/A'}</div>
+                                </div>
+                                <div class="profile-section">
+                                    <h3>Profile Details</h3>
+                                    <div class="profile-field"><label>User ID</label><div class="profile-field-value" style="font-family: monospace; font-size: 12px;">${data.user_id}</div></div>
+                                    <div class="profile-field"><label>Created</label><div class="profile-field-value">${new Date(data.created_at).toLocaleString()}</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Now that the container exists, show the map
+                    if (data.home_latitude && data.home_longitude) {
+                        showHomeOnMap(data.home_latitude, data.home_longitude);
+                    } else {
+                        document.getElementById('homeMapContainer').innerHTML = '<div class="loading" style="padding: 20px;">Home location not set.</div>';
+                    }
+                }
+            } catch (error) {
+                profileContent.innerHTML = `<div class="error-message">An unexpected error occurred: ${error.message}</div>`;
+            }
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('userIdInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loadEmergencyProfile();
+            }
+        });
+
+        // Auto-load profile if user_id is in URL query parameter
+        window.addEventListener('load', function() {
+            const params = new URLSearchParams(window.location.search);
+            const userId = params.get('user_id');
+            if (userId) {
+                document.getElementById('userIdInput').value = userId;
+                loadEmergencyProfile();
+            }
+        });
+    </script>
+</body>
+
+</html>
