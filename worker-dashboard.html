@@ -34,32 +34,14 @@
             overflow-y: auto;
         }
 
-        .worker-header {
-            padding: 20px;
-            border-bottom: 1px solid #222;
-            background: #111;
-        }
-
-        .worker-header h1 {
-            font-size: 20px;
-            margin: 0;
-            color: #ff4444;
-        }
-
-        .worker-header p {
-            font-size: 12px;
-            color: #888;
-            margin: 5px 0 0 0;
-        }
-
-        .alert-stats {
+        .stats {
             display: flex;
             gap: 10px;
             padding: 15px 20px;
             border-bottom: 1px solid #222;
         }
 
-        .alert-stat-card {
+        .stat-card {
             flex: 1;
             background: #1a1a1a;
             padding: 12px;
@@ -68,20 +50,20 @@
             border: 1px solid #2a2a2a;
         }
 
-        .alert-stat-card .stat-label {
+        .stat-card .stat-label {
             font-size: 10px;
             color: #888;
             text-transform: uppercase;
         }
 
-        .alert-stat-card .stat-value {
+        .stat-card .stat-value {
             font-size: 24px;
             font-weight: bold;
             color: #4ade80;
             margin-top: 5px;
         }
 
-        .alert-stat-card.critical .stat-value {
+        .stat-card.critical .stat-value {
             color: #ff4444;
         }
 
@@ -208,11 +190,91 @@
             flex: 1;
             background: #111;
             position: relative;
+            overflow: hidden;
         }
 
         .map {
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 132px;
+        }
+
+        .sos-strip {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 132px;
+            background: rgba(10, 10, 10, 0.96);
+            border-top: 1px solid #222;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px 12px;
+            backdrop-filter: blur(2px);
+        }
+
+        .sos-strip-header {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .sos-strip-list {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 4px;
+        }
+
+        .sos-card {
+            min-width: 230px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-left: 4px solid #ff4444;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 12px;
+        }
+
+        .sos-card:hover {
+            background: #222;
+        }
+
+        .sos-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .sos-name {
+            color: #fff;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+
+        .sos-status {
+            font-size: 10px;
+            color: #000;
+            background: #ff4444;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-weight: 700;
+        }
+
+        .sos-meta {
+            color: #aaa;
+            line-height: 1.35;
         }
 
         .alert-popup {
@@ -284,7 +346,7 @@
             background: #1a1a1a;
             border-left: 4px solid #22c55e;
             border-radius: 6px;
-            curve: pointer;
+            cursor: pointer;
             transition: all 0.3s ease;
             border: 1px solid #2a2a2a;
             font-size: 12px;
@@ -344,43 +406,40 @@
 <body class="worker-dashboard-body">
     <div class="worker-container">
         <!-- Sidebar -->
-        <aside class="worker-sidebar">
+        <aside class="worker-sidebar sidebar">
             <!-- Header -->
-            <div class="worker-header">
-                <h1>🚨 Worker Safety</h1>
-                <p>Real-time SOS Alerts</p>
+            <div class="header">
+                <div class="logo">
+                    <img src="logo.png" alt="SATEY Logo" class="logo-image">
+                    <div class="logo-text">
+                        <h1>SATEY</h1>
+                        <p>Worker Safety Dashboard</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Statistics -->
-            <div class="alert-stats">
-                <div class="alert-stat-card critical">
-                    <div class="stat-label">Active</div>
+            <div class="stats">
+                <div class="stat-card critical">
+                    <div class="stat-label">Active SOS</div>
                     <div class="stat-value" id="activeCount">0</div>
                 </div>
-                <div class="alert-stat-card">
-                    <div class="stat-label">Device</div>
+                <div class="stat-card">
+                    <div class="stat-label">Online Devices</div>
                     <div class="stat-value" id="deviceCount">0</div>
                 </div>
-                <div class="alert-stat-card">
-                    <div class="stat-label">Total</div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Alerts</div>
                     <div class="stat-value" id="totalCount">0</div>
                 </div>
             </div>
 
-            <!-- Active Alerts Section -->
+            <!-- Devices Section -->
             <div class="active-alerts-section">
-                <div class="section-header">� Connected Devices</div>
+                <div class="section-header">Connected Devices</div>
                 <div class="devices-container" id="devicesContainer">
                     <div class="empty-state" style="padding: 20px 10px; font-size: 12px;">
                         <p>No devices connected</p>
-                    </div>
-                </div>
-
-                <div class="section-header">�📍 Active Alerts</div>
-                <div class="alerts-container" id="alertsContainer">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">✓</div>
-                        <p>All workers safe. Waiting for alerts...</p>
                     </div>
                 </div>
             </div>
@@ -389,6 +448,10 @@
         <!-- Map Container -->
         <main class="worker-map-container">
             <div class="map" id="workerMap"></div>
+            <div class="sos-strip">
+                <div class="sos-strip-header">Active SOS Devices</div>
+                <div class="sos-strip-list" id="alertsContainer"></div>
+            </div>
         </main>
     </div>
 
@@ -409,7 +472,7 @@
 
         // ===== INITIALIZE =====
         function init() {
-            console.log('🚀 Worker Safety Dashboard Initializing...');
+            console.log('Worker Safety Dashboard Initializing...');
             initMap();
             connectWebSocket();
         }
@@ -431,7 +494,7 @@
 
             googleSat.addTo(map);
 
-            console.log('✅ Map Initialized');
+            console.log('Map Initialized');
         }
 
         // ===== WEBSOCKET CONNECTION =====
@@ -439,7 +502,7 @@
             ws = new WebSocket(SERVER_URL);
 
             ws.onopen = () => {
-                console.log('✅ Connected to Alert Server');
+                console.log('Connected to Alert Server');
             };
 
             ws.onmessage = (event) => {
@@ -460,18 +523,18 @@
             };
 
             ws.onerror = (error) => {
-                console.error('❌ WebSocket Error:', error);
+                console.error('WebSocket Error:', error);
             };
 
             ws.onclose = () => {
-                console.warn('⚠️  WebSocket Disconnected. Reconnecting in 3s...');
+                console.warn('WebSocket Disconnected. Reconnecting in 3s...');
                 setTimeout(connectWebSocket, 3000);
             };
         }
 
         // ===== HANDLE NEW ALERT =====
         function handleNewAlert(alert) {
-            console.log('🚨 New Alert:', alert);
+            console.log('New Alert:', alert);
 
             // Remove duplicate if exists
             allAlerts = allAlerts.filter(a => a.worker_id !== alert.worker_id || a.status === 'resolved');
@@ -489,31 +552,26 @@
         // ===== RENDER ALERTS LIST =====
         function renderAlerts() {
             const container = document.getElementById('alertsContainer');
+            const activeSos = allAlerts.filter(alert => alert.status !== 'resolved');
 
-            if (allAlerts.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">✓</div>
-                        <p>All workers safe. Waiting for alerts...</p>
-                    </div>
-                `;
+            if (activeSos.length === 0) {
+                container.innerHTML = `<div class="sos-meta" style="padding: 8px 0;">No active SOS alerts.</div>`;
                 updateStats();
                 return;
             }
 
-            container.innerHTML = allAlerts.map(alert => `
-                <div class="alert-item ${alert.status}" data-alert-id="${alert.id}" onclick="focusAlertOnMap('${alert.id}')">
-                    <div class="alert-item-header">
-                        <span class="alert-worker-name">${alert.worker_details?.full_name || 'Unknown'}</span>
-                        <span class="alert-status-badge ${alert.status}">${alert.status.toUpperCase()}</span>
+            container.innerHTML = activeSos.map(alert => `
+                <div class="sos-card" data-alert-id="${alert.id}" onclick="focusAlertOnMap('${alert.id}')">
+                    <div class="sos-card-top">
+                        <span class="sos-name">${alert.worker_details?.full_name || 'Unknown Worker'}</span>
+                        <span class="sos-status">${alert.status.toUpperCase()}</span>
                     </div>
-                    <div class="alert-item-details">
-                        <div>📍 ${alert.latitude?.toFixed(4)}, ${alert.longitude?.toFixed(4)}</div>
-                        <div>📞 ${alert.worker_details?.contact_1 || 'N/A'}</div>
-                        <div>🩸 ${alert.worker_details?.blood_group || 'N/A'}</div>
-                        <div>⏰ ${new Date(alert.timestamp).toLocaleTimeString()}</div>
+                    <div class="sos-meta">
+                        <div>Location: ${alert.latitude?.toFixed(4)}, ${alert.longitude?.toFixed(4)}</div>
+                        <div>Contact: ${alert.worker_details?.contact_1 || 'N/A'}</div>
+                        <div>Time: ${new Date(alert.timestamp).toLocaleTimeString()}</div>
                     </div>
-                    <div class="alert-item-actions">
+                    <div class="alert-item-actions" style="margin-top: 8px;">
                         ${alert.status === 'active' ? `<button class="action-btn ack" onclick="acknowledgeAlert('${alert.id}', event)">ACK</button>` : ''}
                         ${alert.status !== 'resolved' ? `<button class="action-btn resolve" onclick="resolveAlert('${alert.id}', event)">RESOLVE</button>` : ''}
                     </div>
@@ -571,20 +629,20 @@
                 return `
                     <div class="device-item ${!isOnline ? 'offline' : ''}">
                         <div class="device-header">
-                            <span class="device-name">📱 ${device.worker_name}</span>
-                            <span class="device-status-badge ${!isOnline ? 'offline' : ''}">${isOnline ? '🟢 ONLINE' : '⚪ OFFLINE'}</span>
+                            <span class="device-name">DEVICE ${device.worker_name}</span>
+                            <span class="device-status-badge ${!isOnline ? 'offline' : ''}">${isOnline ? 'ONLINE' : 'OFFLINE'}</span>
                         </div>
                         <div class="device-info">
                             <div class="device-info-line">
-                                <span>📞</span>
+                                <span>Contact</span>
                                 <span>${device.contact}</span>
                             </div>
                             <div class="device-info-line">
-                                <span>🩸</span>
+                                <span>Blood</span>
                                 <span>${device.blood_group}</span>
                             </div>
                             <div class="device-info-line">
-                                <span>⏰ Last:</span>
+                                <span>Last Seen</span>
                                 <span>${timeAgo}</span>
                             </div>
                         </div>
@@ -614,10 +672,10 @@
                             align-items: center;
                             justify-content: center;
                             font-weight: bold;
-                            font-size: 18px;
+                            font-size: 14px;
                             box-shadow: 0 0 10px rgba(0,0,0,0.5);
                         ">
-                            🚨
+                            SOS
                         </div>
                     `;
 
@@ -654,7 +712,7 @@
                     method: 'PUT'
                 });
                 if (response.ok) {
-                    console.log('✅ Alert Acknowledged');
+                    console.log('Alert Acknowledged');
                 }
             } catch (error) {
                 console.error('Error acknowledging alert:', error);
@@ -671,7 +729,7 @@
                     method: 'PUT'
                 });
                 if (response.ok) {
-                    console.log('✅ Alert Resolved');
+                    console.log('Alert Resolved');
                 }
             } catch (error) {
                 console.error('Error resolving alert:', error);
