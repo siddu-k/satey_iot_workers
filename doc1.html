@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATEY Worker Safety Alert System - Technical Documentation</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin: 0;
+            font-weight: 700;
+        }
+        
+        .header .subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            font-size: 20px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .diagram {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .flowchart {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .component-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .component-card {
+            background: #ecf0f1;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .component-card h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+        
+        .cost-table {
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .cost-table th {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .future-item {
+            background: #e8f5e8;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .mermaid {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        @media print {
+            body { margin: 0; }
+            .section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>SATEY Industrial Worker Safety System</h1>
+        <div class="subtitle">Hardware-Based Industrial Safety Alert Platform</div>
+        <div class="subtitle">Technical Documentation & Architecture Overview</div>
+    </div>
+
+    <!-- Project Title Display -->
+    <div class="section">
+        <h2>📋 Project Title Display</h2>
+        <table>
+            <tr>
+                <th>Attribute</th>
+                <th>Details</th>
+            </tr>
+            <tr>
+                <td><strong>Project Name</strong></td>
+                <td>SATEY Worker Safety Alert System</td>
+            </tr>
+            <tr>
+                <td><strong>Domain</strong></td>
+                <td>Industrial Safety / Emergency Response</td>
+            </tr>
+            <tr>
+                <td><strong>Current Deployment</strong></td>
+                <td>Wi-Fi/LAN Prototype</td>
+            </tr>
+            <tr>
+                <td><strong>Target Deployment</strong></td>
+                <td>LoRa-enabled Long-range Emergency Network</td>
+            </tr>
+            <tr>
+                <td><strong>Technology Stack</strong></td>
+                <td>ESP32, Node.js, WebSocket, Supabase, HTML5</td>
+            </tr>
+            <tr>
+                <td><strong>Version</strong></td>
+                <td>1.0.0</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Block Diagram -->
+    <div class="section">
+        <h2>🏗️ Block Diagram</h2>
+        <div class="diagram">
+            <div class="mermaid">
+                <svg width="100%" height="400" viewBox="0 0 800 400">
+                    <!-- Worker Unit -->
+                    <rect x="20" y="150" width="140" height="80" fill="#e74c3c" stroke="#c0392b" stroke-width="2" rx="5"/>
+                    <text x="90" y="185" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Worker Unit</text>
+                    <text x="90" y="200" text-anchor="middle" fill="white" font-size="10">ESP32 + SOS</text>
+                    <text x="90" y="215" text-anchor="middle" fill="white" font-size="10">+ GPS</text>
+                    
+                    <!-- Network Layer -->
+                    <rect x="200" y="150" width="120" height="80" fill="#3498db" stroke="#2980b9" stroke-width="2" rx="5"/>
+                    <text x="260" y="185" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Network Layer</text>
+                    <text x="260" y="200" text-anchor="middle" fill="white" font-size="10">Wi-Fi/LAN</text>
+                    <text x="260" y="215" text-anchor="middle" fill="white" font-size="10">(Prototype)</text>
+                    
+                    <!-- Node.js Server -->
+                    <rect x="360" y="150" width="140" height="80" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" rx="5"/>
+                    <text x="430" y="185" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Node.js Server</text>
+                    <text x="430" y="200" text-anchor="middle" fill="white" font-size="10">REST + WebSocket</text>
+                    <text x="430" y="215" text-anchor="middle" fill="white" font-size="10">Alert Processing</text>
+                    
+                    <!-- Supabase -->
+                    <rect x="540" y="80" width="120" height="60" fill="#27ae60" stroke="#229954" stroke-width="2" rx="5"/>
+                    <text x="600" y="105" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Supabase</text>
+                    <text x="600" y="120" text-anchor="middle" fill="white" font-size="10">Worker Profiles</text>
+                    <text x="600" y="135" text-anchor="middle" fill="white" font-size="10">Alert History</text>
+                    
+                    <!-- Dashboard -->
+                    <rect x="540" y="220" width="120" height="60" fill="#f39c12" stroke="#e67e22" stroke-width="2" rx="5"/>
+                    <text x="600" y="245" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Dashboard</text>
+                    <text x="600" y="260" text-anchor="middle" fill="white" font-size="10">Map + SOS Cards</text>
+                    <text x="600" y="275" text-anchor="middle" fill="white" font-size="10">Real-time UI</text>
+                    
+                    <!-- Arrows -->
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+                        </marker>
+                    </defs>
+                    
+                    <line x1="160" y1="190" x2="200" y2="190" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <line x1="320" y1="190" x2="360" y2="190" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <line x1="500" y1="170" x2="540" y2="110" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <line x1="500" y1="210" x2="540" y2="250" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Circuit Diagram / Architecture -->
+    <div class="section">
+        <h2>⚡ Circuit Diagram / System Architecture</h2>
+        
+        <h3>Hardware Wiring Diagram</h3>
+        <div class="diagram">
+            <svg width="100%" height="300" viewBox="0 0 600 300">
+                <!-- ESP32 -->
+                <rect x="50" y="50" width="150" height="200" fill="#2c3e50" stroke="#1a252f" stroke-width="2" rx="5"/>
+                <text x="125" y="40" text-anchor="middle" font-size="14" font-weight="bold">ESP32</text>
+                
+                <!-- GPIO Pins -->
+                <circle cx="200" cy="80" r="5" fill="#e74c3c"/>
+                <text x="210" y="85" font-size="10">GPIO13</text>
+                
+                <circle cx="200" cy="120" r="5" fill="#3498db"/>
+                <text x="210" y="125" font-size="10">GPIO5</text>
+                
+                <circle cx="200" cy="160" r="5" fill="#27ae60"/>
+                <text x="210" y="165" font-size="10">RX2 (19)</text>
+                
+                <circle cx="200" cy="200" r="5" fill="#27ae60"/>
+                <text x="210" y="205" font-size="10">TX2 (18)</text>
+                
+                <!-- SOS Button -->
+                <rect x="300" y="60" width="80" height="40" fill="#e74c3c" stroke="#c0392b" stroke-width="2" rx="3"/>
+                <text x="340" y="85" text-anchor="middle" fill="white" font-size="12" font-weight="bold">SOS</text>
+                <line x1="200" y1="80" x2="300" y2="80" stroke="#333" stroke-width="2"/>
+                <line x1="340" y1="100" x2="340" y2="130" stroke="#333" stroke-width="2"/>
+                <line x1="340" y1="130" x2="125" y2="130" stroke="#333" stroke-width="2"/>
+                <text x="320" y="145" font-size="10">GND</text>
+                
+                <!-- LED -->
+                <circle cx="340" cy="120" r="15" fill="#f39c12" stroke="#e67e22" stroke-width="2"/>
+                <text x="340" y="125" text-anchor="middle" fill="white" font-size="10" font-weight="bold">LED</text>
+                <line x1="200" y1="120" x2="325" y2="120" stroke="#333" stroke-width="2"/>
+                
+                <!-- GPS Module -->
+                <rect x="300" y="160" width="100" height="60" fill="#27ae60" stroke="#229954" stroke-width="2" rx="3"/>
+                <text x="350" y="185" text-anchor="middle" fill="white" font-size="12" font-weight="bold">GPS</text>
+                <text x="350" y="200" text-anchor="middle" fill="white" font-size="10">Module</text>
+                <line x1="200" y1="160" x2="300" y2="175" stroke="#333" stroke-width="2"/>
+                <line x1="200" y1="200" x2="300" y2="205" stroke="#333" stroke-width="2"/>
+                <text x="250" y="155" font-size="10">TX</text>
+                <text x="250" y="215" font-size="10">RX</text>
+                
+                <!-- Power -->
+                <rect x="50" y="270" width="150" height="20" fill="#95a5a6" stroke="#7f8c8d" stroke-width="1" rx="2"/>
+                <text x="125" y="285" text-anchor="middle" fill="white" font-size="10" font-weight="bold">3.3V Power Supply</text>
+            </svg>
+        </div>
+        
+        <h3>System Architecture</h3>
+        <div class="diagram">
+            <svg width="100%" height="400" viewBox="0 0 800 400">
+                <!-- Device Side -->
+                <rect x="20" y="20" width="200" height="160" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2" rx="5"/>
+                <text x="120" y="40" text-anchor="middle" font-size="14" font-weight="bold">Device Side</text>
+                <rect x="30" y="60" width="180" height="25" fill="#3498db" rx="3"/>
+                <text x="120" y="77" text-anchor="middle" fill="white" font-size="11">ESP32 Firmware</text>
+                <rect x="30" y="95" width="180" height="25" fill="#e74c3c" rx="3"/>
+                <text x="120" y="112" text-anchor="middle" fill="white" font-size="11">SOS Button Interrupt</text>
+                <rect x="30" y="130" width="180" height="25" fill="#27ae60" rx="3"/>
+                <text x="120" y="147" text-anchor="middle" fill="white" font-size="11">GPS Reader</text>
+                <rect x="30" y="165" width="180" height="25" fill="#f39c12" rx="3"/>
+                <text x="120" y="182" text-anchor="middle" fill="white" font-size="11">WiFi Manager</text>
+                
+                <!-- Backend -->
+                <rect x="260" y="20" width="200" height="160" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2" rx="5"/>
+                <text x="360" y="40" text-anchor="middle" font-size="14" font-weight="bold">Backend</text>
+                <rect x="270" y="60" width="180" height="25" fill="#9b59b6" rx="3"/>
+                <text x="360" y="77" text-anchor="middle" fill="white" font-size="11">Express API</text>
+                <rect x="270" y="95" width="180" height="25" fill="#e67e22" rx="3"/>
+                <text x="360" y="112" text-anchor="middle" fill="white" font-size="11">Alert Processor</text>
+                <rect x="270" y="130" width="180" height="25" fill="#8e44ad" rx="3"/>
+                <text x="360" y="147" text-anchor="middle" fill="white" font-size="11">WebSocket Broadcast</text>
+                <rect x="270" y="165" width="180" height="25" fill="#16a085" rx="3"/>
+                <text x="360" y="182" text-anchor="middle" fill="white" font-size="11">Device Heartbeat Tracker</text>
+                
+                <!-- Data & UI -->
+                <rect x="500" y="20" width="200" height="160" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2" rx="5"/>
+                <text x="600" y="40" text-anchor="middle" font-size="14" font-weight="bold">Data & UI</text>
+                <rect x="510" y="60" width="180" height="25" fill="#27ae60" rx="3"/>
+                <text x="600" y="77" text-anchor="middle" fill="white" font-size="11">Supabase Tables</text>
+                <rect x="510" y="95" width="180" height="25" fill="#f39c12" rx="3"/>
+                <text x="600" y="112" text-anchor="middle" fill="white" font-size="11">Worker Dashboard</text>
+                <rect x="510" y="130" width="180" height="25" fill="#e74c3c" rx="3"/>
+                <text x="600" y="147" text-anchor="middle" fill="white" font-size="11">Real-time Map</text>
+                <rect x="510" y="165" width="180" height="25" fill="#34495e" rx="3"/>
+                <text x="600" y="182" text-anchor="middle" fill="white" font-size="11">Alert Management</text>
+                
+                <!-- Connection Arrows -->
+                <defs>
+                    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+                    </marker>
+                </defs>
+                
+                <line x1="220" y1="100" x2="260" y2="100" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                <line x1="460" y1="100" x2="500" y2="100" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                
+                <!-- Data Flow Labels -->
+                <text x="240" y="90" font-size="10" text-anchor="middle">HTTP POST</text>
+                <text x="480" y="90" font-size="10" text-anchor="middle">WebSocket</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Flowchart -->
+    <div class="section">
+        <h2>🔄 System Flowchart</h2>
+        <div class="flowchart">
+            <svg width="100%" height="600" viewBox="0 0 400 600">
+                <!-- Start -->
+                <ellipse cx="200" cy="40" rx="60" ry="25" fill="#27ae60" stroke="#229954" stroke-width="2"/>
+                <text x="200" y="45" text-anchor="middle" fill="white" font-size="12" font-weight="bold">START</text>
+                
+                <!-- Initialize -->
+                <rect x="100" y="80" width="200" height="40" fill="#3498db" stroke="#2980b9" stroke-width="2" rx="5"/>
+                <text x="200" y="95" text-anchor="middle" fill="white" font-size="11">Initialize ESP32</text>
+                <text x="200" y="110" text-anchor="middle" fill="white" font-size="11">Connect to Network</text>
+                
+                <!-- Decision: SOS Pressed -->
+                <polygon points="200,140 280,180 200,220 120,180" fill="#f39c12" stroke="#e67e22" stroke-width="2"/>
+                <text x="200" y="180" text-anchor="middle" fill="white" font-size="11" font-weight="bold">SOS</text>
+                <text x="200" y="195" text-anchor="middle" fill="white" font-size="11">Pressed?</text>
+                
+                <!-- No Path - Heartbeat -->
+                <rect x="50" y="250" width="120" height="40" fill="#95a5a6" stroke="#7f8c8d" stroke-width="2" rx="5"/>
+                <text x="110" y="265" text-anchor="middle" fill="white" font-size="11">Send Heartbeat</text>
+                <text x="110" y="280" text-anchor="middle" fill="white" font-size="11">Periodically</text>
+                
+                <!-- Yes Path - GPS Read -->
+                <rect x="230" y="250" width="120" height="40" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" rx="5"/>
+                <text x="290" y="265" text-anchor="middle" fill="white" font-size="11">Read GPS</text>
+                <text x="290" y="280" text-anchor="middle" fill="white" font-size="11">Coordinates</text>
+                
+                <!-- Create Alert -->
+                <rect x="230" y="310" width="120" height="40" fill="#e74c3c" stroke="#c0392b" stroke-width="2" rx="5"/>
+                <text x="290" y="325" text-anchor="middle" fill="white" font-size="11">Create Alert</text>
+                <text x="290" y="340" text-anchor="middle" fill="white" font-size="11">Payload</text>
+                
+                <!-- Send Alert -->
+                <rect x="230" y="370" width="120" height="40" fill="#c0392b" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                <text x="290" y="385" text-anchor="middle" fill="white" font-size="11">POST</text>
+                <text x="290" y="400" text-anchor="middle" fill="white" font-size="11">/api/worker-alert</text>
+                
+                <!-- Backend Process -->
+                <rect x="230" y="430" width="120" height="40" fill="#8e44ad" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                <text x="290" y="445" text-anchor="middle" fill="white" font-size="11">Backend</text>
+                <text x="290" y="460" text-anchor="middle" fill="white" font-size="11">Broadcast</text>
+                
+                <!-- Dashboard Display -->
+                <rect x="230" y="490" width="120" height="40" fill="#16a085" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                <text x="290" y="505" text-anchor="middle" fill="white" font-size="11">Dashboard</text>
+                <text x="290" y="520" text-anchor="middle" fill="white" font-size="11">Display Alert</text>
+                
+                <!-- Arrows -->
+                <defs>
+                    <marker id="flowArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+                    </marker>
+                </defs>
+                
+                <line x1="200" y1="65" x2="200" y2="80" stroke="#333" stroke-width="2" marker-end="url(#flowArrow)"/>
+                <line x1="200" y1="120" x2="200" y2="140" stroke="#333" stroke-width="2" marker-end="url(#flowArrow)"/>
+                <line x1="120" y1="180" x2="110" y2="250" stroke="#333" stroke-width="2" marker-end="url(#flowArrow)"/>
+                <text x="80" y="215" font-size="10">No</text>
+                
+                <line x1="280" y1="180" x2="290" y2="250" stroke="#333" stroke-width="2" marker-end="url(#flowArrow)"/>
+                <text x="310" y="215" font-size="10">Yes</text>
+                
+                <line x1="290" y1="290" x2="290" y2="310" stroke="#333" stroke-width="2" marker-end="url(#flowArrow)"/>
+                <line x1="290" y1="350" x2="290" y2="370" stroke="#333" stroke-width="2" marker-end="url(#flowArrow)"/>
+                <line x1="290" y1="410" x2="290" y2="430" stroke="#333" stroke-width="2" marker-end="url(#flowArrow)"/>
+                <line x1="290" y1="470" x2="290" y2="490" stroke="#333" stroke-width="2" marker-end="url(#flowArrow)"/>
+                
+                <!-- Loop back -->
+                <path d="M 110 290 Q 50 350 110 410 Q 50 470 110 530 Q 50 570 200 570 Q 350 570 350 400 Q 350 200 200 200" 
+                      fill="none" stroke="#333" stroke-width="2" marker-end="url(#flowArrow)" stroke-dasharray="5,5"/>
+                <text x="30" y="400" font-size="10">Loop</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Live Data / Real-time Results -->
+    <div class="section">
+        <h2>📊 Live Data / Real-time Results</h2>
+        
+        <h3>Sample Alert Payload</h3>
+        <div class="code-block">
+{
+  "worker_id": "58788297-ff08-45a8-8894-2caced2ca9dd",
+  "alert_type": "SOS",
+  "latitude": 17.4435,
+  "longitude": 78.3772,
+  "timestamp": 1734582310,
+  "status": "active",
+  "worker_details": {
+    "full_name": "John Doe",
+    "contact_1": "+91-9876543210",
+    "blood_group": "O+"
+  }
+}
+        </div>
+        
+        <h3>Real-time Dashboard Features</h3>
+        <div class="highlight">
+            <ul>
+                <li><strong>Live Map Integration:</strong> Real-time GPS coordinates plotted on interactive map</li>
+                <li><strong>WebSocket Streaming:</strong> Instant alert updates without page refresh</li>
+                <li><strong>Device Status Tracking:</strong> Online/offline status with last heartbeat</li>
+                <li><strong>Alert Lifecycle Management:</strong> Active → Acknowledged → Resolved states</li>
+                <li><strong>Audio Notifications:</strong> Immediate sound alerts for new SOS signals</li>
+            </ul>
+        </div>
+        
+        <h3>Sample Runtime Logs</h3>
+        <div class="code-block">
+Worker Safety Dashboard Initializing...
+Map Initialized
+Connected to Alert Server
+New Alert: { 
+  id: "worker-123-273210", 
+  worker_id: "58788297-ff08-45a8-8894-2caced2ca9dd", 
+  alert_type: "SOS", 
+  latitude: 17.4435, 
+  longitude: 78.3772,
+  status: "active"
+}
+Alert Acknowledged by Operator
+Alert Resolved and Closed
+        </div>
+        
+        <h3>API Test Example</h3>
+        <div class="code-block">
+curl -X POST http://localhost:3000/api/worker-alert \
+  -H "Content-Type: application/json" \
+  -d '{
+    "worker_id": "test-worker",
+    "alert_type": "SOS",
+    "latitude": 17.4435,
+    "longitude": 78.3772,
+    "timestamp": 123456,
+    "status": "active"
+  }'
+        </div>
+    </div>
+
+    <!-- Working Demonstration -->
+    <div class="section">
+        <h2>🎯 Working Demonstration</h2>
+        
+        <h3>Demo Scenario Steps</h3>
+        <div class="highlight">
+            <ol>
+                <li><strong>Setup:</strong> Start Node.js server and open worker dashboard</li>
+                <li><strong>Trigger:</strong> Worker presses SOS button on ESP32 device</li>
+                <li><strong>Transmission:</strong> ESP32 sends alert packet to backend API via HTTP POST</li>
+                <li><strong>Processing:</strong> Backend enriches alert with worker profile from Supabase</li>
+                <li><strong>Broadcast:</strong> Dashboard receives live alert through WebSocket</li>
+                <li><strong>Display:</strong> Alert appears on map and in bottom SOS strip</li>
+                <li><strong>Action:</strong> Control room operator clicks ACK or RESOLVE</li>
+            </ol>
+        </div>
+        
+        <h3>Quick Start Commands</h3>
+        <div class="code-block">
+# Install Dependencies
+npm install
+
+# Start Server
+npm start
+
+# Access Dashboard
+http://localhost:3000/worker-dashboard.html
+        </div>
+        
+        <h3>ESP32 Configuration</h3>
+        <div class="code-block">
+#define WIFI_SSID "YOUR_WIFI"
+#define WIFI_PASSWORD "YOUR_PASSWORD"
+#define SERVER_URL "http://YOUR_PC_IP:3000"
+#define WORKER_ID "worker-unique-id"
+        </div>
+        
+        <h3>Device Configuration Web UI</h3>
+        <p>Each ESP32 device hosts a configuration server at its IP address for easy server URL management.</p>
+    </div>
+
+    <!-- Technical Explanation -->
+    <div class="section">
+        <h2>⚙️ Technical Explanation</h2>
+        
+        <h3>1. Edge Device Layer (ESP32)</h3>
+        <div class="component-card">
+            <h4>Core Responsibilities</h4>
+            <ul>
+                <li>Read SOS button state with interrupt handling</li>
+                <li>Capture GPS coordinates via UART communication</li>
+                <li>Send HTTP POST requests to backend API</li>
+                <li>Maintain periodic heartbeat for device status</li>
+                <li>Local feedback through LED indicators</li>
+                <li>Configuration web server for server URL management</li>
+            </ul>
+        </div>
+        
+        <h3>2. Backend Layer (Node.js + Express + WebSocket)</h3>
+        <div class="component-card">
+            <h4>Core Responsibilities</h4>
+            <ul>
+                <li>Receive and validate alert payloads</li>
+                <li>Fetch worker data from Supabase emergency_profiles</li>
+                <li>Manage alert lifecycle (active → acknowledged → resolved)</li>
+                <li>Broadcast real-time updates via WebSocket</li>
+                <li>Track device connectivity and heartbeat</li>
+                <li>RESTful API for alert management</li>
+            </ul>
+        </div>
+        
+        <h3>3. Data Layer (Supabase)</h3>
+        <div class="component-card">
+            <h4>Database Schema</h4>
+            <ul>
+                <li><strong>emergency_profiles:</strong> Worker master data (name, contact, blood group)</li>
+                <li><strong>worker_sos_alerts:</strong> Incident history for analytics</li>
+                <li>Real-time subscriptions for live updates</li>
+                <li>Built-in authentication and row-level security</li>
+            </ul>
+        </div>
+        
+        <h3>4. Frontend Layer (Dashboard)</h3>
+        <div class="component-card">
+            <h4>UI Components</h4>
+            <ul>
+                <li>Interactive map with Leaflet.js for location visualization</li>
+                <li>Real-time SOS cards with worker details</li>
+                <li>Device status monitoring panel</li>
+                <li>Acknowledge/Resolve action buttons</li>
+                <li>Statistics dashboard with live counters</li>
+                <li>WebSocket client for instant updates</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Components List -->
+    <div class="section">
+        <h2>🔧 Components List</h2>
+        
+        <div class="component-list">
+            <div class="component-card">
+                <h4>Hardware Components</h4>
+                <ul>
+                    <li><strong>ESP32 Development Board</strong> - Microcontroller with WiFi</li>
+                    <li><strong>Push Button</strong> - SOS trigger mechanism</li>
+                    <li><strong>GPS Module</strong> - Location tracking (NEO-6M)</li>
+                    <li><strong>LED/Buzzer</strong> - Local feedback indicators</li>
+                    <li><strong>Battery + Charging</strong> - Power management</li>
+                    <li><strong>Enclosure</strong> - Protective housing</li>
+                    <li><strong>Jumper Wires</strong> - Circuit connections</li>
+                </ul>
+            </div>
+            
+            <div class="component-card">
+                <h4>Software Components</h4>
+                <ul>
+                    <li><strong>Node.js Runtime</strong> - Backend JavaScript environment</li>
+                    <li><strong>Express Server</strong> - REST API framework</li>
+                    <li><strong>WebSocket (ws)</strong> - Real-time communication</li>
+                    <li><strong>Supabase Client</strong> - Database and authentication</li>
+                    <li><strong>Leaflet.js</strong> - Interactive mapping library</li>
+                    <li><strong>ArduinoJSON</strong> - JSON parsing on ESP32</li>
+                    <li><strong>TinyGPS++</strong> - GPS data parsing</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cost Estimation -->
+    <div class="section">
+        <h2>💰 Cost Estimation</h2>
+        
+        <h3>Per Worker Device (Prototype)</h3>
+        <table class="cost-table">
+            <tr>
+                <th>Component</th>
+                <th>Quantity</th>
+                <th>Unit Cost (INR)</th>
+                <th>Total Cost (INR)</th>
+            </tr>
+            <tr>
+                <td>ESP32 Board</td>
+                <td>1</td>
+                <td>350 - 600</td>
+                <td>350 - 600</td>
+            </tr>
+            <tr>
+                <td>SOS Button + Passive Components</td>
+                <td>1 set</td>
+                <td>30 - 80</td>
+                <td>30 - 80</td>
+            </tr>
+            <tr>
+                <td>GPS Module (NEO-6M)</td>
+                <td>1</td>
+                <td>500 - 900</td>
+                <td>500 - 900</td>
+            </tr>
+            <tr>
+                <td>Li-ion Battery + TP4056 Charger</td>
+                <td>1 set</td>
+                <td>250 - 500</td>
+                <td>250 - 500</td>
+            </tr>
+            <tr>
+                <td>LED + Buzzer + Resistors</td>
+                <td>1 set</td>
+                <td>50 - 100</td>
+                <td>50 - 100</td>
+            </tr>
+            <tr>
+                <td>Enclosure + Wiring</td>
+                <td>1 set</td>
+                <td>150 - 300</td>
+                <td>150 - 300</td>
+            </tr>
+            <tr>
+                <td>Assembly & Testing</td>
+                <td>1</td>
+                <td>100 - 200</td>
+                <td>100 - 200</td>
+            </tr>
+            <tr style="background: #27ae60; color: white; font-weight: bold;">
+                <td colspan="3"><strong>Total (with GPS)</strong></td>
+                <td><strong>1,430 - 2,680</strong></td>
+            </tr>
+        </table>
+        
+        <h3>Shared Infrastructure Costs</h3>
+        <table class="cost-table">
+            <tr>
+                <th>Infrastructure</th>
+                <th>Cost (INR)</th>
+                <th>Notes</th>
+            </tr>
+            <tr>
+                <td>Router/Network Setup</td>
+                <td>1,500 - 3,000</td>
+                <td>One-time setup for local deployment</td>
+            </tr>
+            <tr>
+                <td>Cloud Server (Optional)</td>
+                <td>300 - 1,500/month</td>
+                <td>For remote deployment</td>
+            </tr>
+            <tr>
+                <td>Supabase Database</td>
+                <td>Free tier initially</td>
+                <td>Paid tier based on usage</td>
+            </tr>
+            <tr>
+                <td>Development Tools</td>
+                <td>0 - 5,000</td>
+                <td>IDE, cables, testing equipment</td>
+            </tr>
+        </table>
+        
+        <div class="highlight">
+            <strong>Cost-Saving Tips:</strong>
+            <ul>
+                <li>Bulk component purchases can reduce per-unit costs by 20-30%</li>
+                <li>GPS module can be optional for indoor deployments</li>
+                <li>Open-source software eliminates licensing costs</li>
+                <li>Local server deployment avoids cloud recurring costs</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Future Scope -->
+    <div class="section">
+        <h2>🚀 Future Scope</h2>
+        
+        <h3>Planned Upgrade: LoRa Integration</h3>
+        <div class="future-item">
+            <h4>Long-Range Communication</h4>
+            <ul>
+                <li>Replace Wi-Fi with LoRa radio modules for extended range</li>
+                <li>Coverage up to 10km in rural areas, 2-3km in urban</li>
+                <li>Lower power consumption for extended battery life</li>
+                <li>Better penetration through obstacles and buildings</li>
+            </ul>
+        </div>
+        
+        <div class="future-item">
+            <h4>LoRaWAN Gateway Strategy</h4>
+            <ul>
+                <li>Deploy multiple LoRa gateways for redundancy</li>
+                <li>Mesh networking for device-to-device communication</li>
+                <li>Automatic failover between gateways</li>
+                <li>Edge processing at gateway level</li>
+            </ul>
+        </div>
+        
+        <h3>Product Expansion Features</h3>
+        <div class="future-item">
+            <h4>Advanced Safety Features</h4>
+            <ul>
+                <li><strong>Geo-fencing:</strong> Automatic alerts for hazardous zone entries</li>
+                <li><strong>Fall Detection:</strong> Accelerometer-based automatic SOS triggers</li>
+                <li><strong>Environmental Sensors:</strong> Temperature, gas, radiation monitoring</li>
+                <li><strong>Biometric Monitoring:</strong> Heart rate, stress level tracking</li>
+            </ul>
+        </div>
+        
+        <div class="future-item">
+            <h4>Communication Enhancements</h4>
+            <ul>
+                <li><strong>Multi-channel Alerts:</strong> SMS, WhatsApp, email, voice calls</li>
+                <li><strong>Escalation Workflows:</strong> Automatic escalation if unacknowledged</li>
+                <li><strong>Two-way Communication:</strong> Voice/text communication with workers</li>
+                <li><strong>Group Alerts:</strong> Broadcast emergency notifications to all workers</li>
+            </ul>
+        </div>
+        
+        <div class="future-item">
+            <h4>Bluetooth Proximity Scanner</h4>
+            <ul>
+                <li><strong>Mobile-ESP32 Integration:</strong> Android app scans for nearby ESP32 devices</li>
+                <li><strong>Disaster Location Tracking:</strong> Find assumed position of safety devices under buildings</li>
+                <li><strong>Signal Strength Analysis:</strong> RSSI-based distance estimation</li>
+                <li><strong>Building Collapse Detection:</strong> Proximity mapping for trapped workers</li>
+                <li><strong>Rescue Team Coordination:</strong> Real-time device location sharing</li>
+                <li><strong>Emergency Position Triangulation:</strong> Multiple device signals for accurate positioning</li>
+            </ul>
+        </div>
+        
+        <div class="future-item">
+            <h4>Analytics & Reporting</h4>
+            <ul>
+                <li><strong>Incident Analytics:</strong> Response time analysis, hotspots identification</li>
+                <li><strong>Predictive Safety:</strong> AI-based risk assessment</li>
+                <li><strong>Compliance Reporting:</strong> Automated safety reports generation</li>
+                <li><strong>Performance Metrics:</strong> SLA tracking, MTTR analysis</li>
+            </ul>
+        </div>
+        
+        <div class="future-item">
+            <h4>Enterprise Features</h4>
+            <ul>
+                <li><strong>Multi-site Management:</strong> Centralized dashboard for multiple locations</li>
+                <li><strong>Role-based Access:</strong> Different access levels for various roles</li>
+                <li><strong>Integration APIs:</strong> Connect with existing ERP/HCM systems</li>
+                <li><strong>Mobile Apps:</strong> Native iOS/Android applications</li>
+            </ul>
+        </div>
+        
+        <h3>Technical Roadmap</h3>
+        <table>
+            <tr>
+                <th>Timeline</th>
+                <th>Milestone</th>
+                <th>Key Features</th>
+            </tr>
+            <tr>
+                <td>3-6 Months</td>
+                <td>LoRa Prototype</td>
+                <td>LoRa module integration, gateway setup</td>
+            </tr>
+            <tr>
+                <td>6-12 Months</td>
+                <td>Field Testing</td>
+                <td>Real-world deployment, performance optimization</td>
+            </tr>
+            <tr>
+                <td>12-18 Months</td>
+                <td>Product Launch</td>
+                <li>Manufacturing, certification, commercial release</td>
+            </tr>
+            <tr>
+                <td>18+ Months</td>
+                <td>Enterprise Version</td>
+                <li>Advanced features, multi-site support</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <div class="section">
+        <div style="text-align: center; padding: 20px; border-top: 2px solid #2c3e50;">
+            <p><strong>SATEY Worker Safety Alert System</strong></p>
+            <p>Version 1.0.0 | Industrial Safety Platform</p>
+            <p>© 2024 SATEY Technologies</p>
+        </div>
+    </div>
+
+</body>
+</html>

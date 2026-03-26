@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VASATEY Public Safety App - Technical Documentation</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'base',
+                themeVariables: {
+                    fontFamily: 'Inter, sans-serif',
+                    primaryColor: '#ffffff',
+                    primaryTextColor: '#1e293b',
+                    primaryBorderColor: '#cbd5e1',
+                    lineColor: '#64748b',
+                    secondaryColor: '#f1f5f9',
+                    tertiaryColor: '#ffffff',
+                    nodeBorder: '#94a3b8',
+                    mainBkg: '#ffffff',
+                    clusterBkg: '#f8fafc',
+                    clusterBorder: '#e2e8f0',
+                    titleColor: '#0f172a'
+                }
+            });
+        });
+    </script>
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #e0e7ff;
+            --primary-dark: #3730a3;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #f1f5f9;
+            --surface: rgba(255, 255, 255, 0.85);
+            --surface-border: rgba(255, 255, 255, 0.5);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Glassmorphic Container */
+        .glass-panel {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--surface-border);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 24px;
+            color: white;
+            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.8;
+        }
+
+        .header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 1.25rem;
+            margin-top: 10px;
+            opacity: 0.95;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--primary);
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 12px;
+        }
+
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .mermaid-container {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            margin: 30px 0;
+            border: 1px solid var(--surface-border);
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+            transition: all 0.3s ease;
+        }
+
+        .mermaid-container:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .mermaid {
+            width: 100%;
+        }
+
+        /* Lists and Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--surface-border);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 16px 0 0 16px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card h4 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--primary-dark);
+            font-size: 1.25rem;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        .card ul {
+            padding-left: 20px;
+            margin: 0;
+            color: var(--text-muted);
+        }
+
+        .card li {
+            margin-bottom: 10px;
+        }
+
+        .card li strong {
+            color: var(--text-main);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 30px 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        th,
+        td {
+            padding: 18px 20px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0284c7;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .tag.tag-warning {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .tag.tag-success {
+            background: #dcfce3;
+            color: #166534;
+        }
+
+        .tag.tag-danger {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .tag.tag-purple {
+            background: #f3e8ff;
+            color: #7e22ce;
+        }
+
+        .callout {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            border-left: 4px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 30px 0;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .glass-panel {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>VASATEY Public Safety App</h1>
+            <div class="subtitle">Mobile-First Public Safety & Emergency Response Platform</div>
+            <div class="badge">Technical Documentation v1.0</div>
+        </div>
+
+        <div class="glass-panel">
+            <h2>🏗️ Architecture Overview</h2>
+
+            <h3>1. High-Level Block Diagram</h3>
+            <p>This diagram represents the interaction between the User, their physical environment (BLE devices,
+                Voice), the Mobile App, Cloud Platform, and final alerting systems.</p>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    flowchart TD
+                    classDef user fill:#0f172a,stroke:#334155,stroke-width:2px,color:#fff,rx:8px
+                    classDef hw fill:#059669,stroke:#047857,stroke-width:2px,color:#fff,rx:8px
+                    classDef app fill:#4f46e5,stroke:#4338ca,stroke-width:2px,color:#fff,rx:8px
+                    classDef cloud fill:#ea580c,stroke:#c2410c,stroke-width:2px,color:#fff,rx:8px
+                    classDef alert fill:#db2777,stroke:#be185d,stroke-width:2px,color:#fff,rx:8px
+                    classDef dash fill:#0284c7,stroke:#0369a1,stroke-width:2px,color:#fff,rx:8px
+
+                    USER["👤 USER<br>Worker / Person"]:::user
+                    WAKE["🎙️ Voice Wake<br>Custom Phrase"]:::hw
+                    BLE["🏷️ ESP32 BLE<br>Beacon Signal"]:::hw
+
+                    APP["📱 VASATEY Mobile App<br>Voice Engine + BLE + GPS"]:::app
+
+                    CLOUD["☁️ Cloud Platform<br>Supabase DB + Storage"]:::cloud
+                    FCM["🔔 FCM Push<br>Firebase Engine"]:::cloud
+
+                    GUARD["👥 Guardians<br>Push Alerts & Email"]:::alert
+                    SMS["💬 SMS Fallback<br>Direct Text Message"]:::alert
+                    CALL["📞 Auto Call<br>Emergency Ringing"]:::alert
+
+                    DASH["💻 Dashboard<br>Web Monitor PC"]:::dash
+
+                    USER -->|Uses| APP
+                    WAKE -->|Detects Phrase| APP
+                    BLE -->|Scans Range| APP
+
+                    APP -->|Sync Data & Photos| CLOUD
+                    CLOUD -->|Trigger Request| FCM
+
+                    APP -->|Direct Dispatch| SMS
+                    APP -->|Direct Routing| CALL
+                    FCM -->|Push Notification| GUARD
+
+                    CLOUD -->|Realtime Websocket| DASH
+                </div>
+            </div>
+
+            <h3>2. Mobile App Internal Architecture</h3>
+            <p>Inside the Android app, activities are separated from background processors and the alert decision
+                engine.</p>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    flowchart LR
+                    classDef module fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,color:#0f172a,rx:8px
+                    classDef engine fill:#eef2ff,stroke:#6366f1,stroke-width:2px,color:#4338ca,rx:8px
+                    classDef ext fill:#fef2f2,stroke:#f87171,stroke-width:2px,color:#b91c1c,rx:8px
+
+                    UI["📱 UI Screens<br>- Home / SOS<br>- Guardian Setup<br>- Profile Mgmt"]:::module
+                    BG["⚙️ Background Workers<br>- Vosk Voice Listener<br>- LocationTracker<br>- BLE Scanner"]:::module
+
+                    ENGINE["🎛️ Alert Engine (Core)<br>- AlertManager Logic<br>- Context Builder (GPS/Media)<br>-
+                    Fallback Router"]:::engine
+
+                    CLOUD["☁️ Remote Sync<br>Supabase / Online"]:::ext
+                    LOCAL["📡 Local Routes<br>SMS / Phone Call"]:::ext
+
+                    UI -->|Manual SOS| ENGINE
+                    BG -->|Trigger Detected| ENGINE
+                    ENGINE -->|Primary Delivery| CLOUD
+                    ENGINE -->|Offline Fallback| LOCAL
+                </div>
+            </div>
+
+            <h3>3. Hardware Architecture</h3>
+            <p>This diagram represents the physical wiring and components connected to the ESP32 microcontroller.</p>
+            <div class="mermaid-container">
+                <svg width="100%" height="300" viewBox="0 0 600 300" style="max-width: 600px;">
+                    <!-- ESP32 -->
+                    <rect x="50" y="50" width="150" height="200" fill="#2c3e50" stroke="#1a252f" stroke-width="2"
+                        rx="5"></rect>
+                    <text x="125" y="40" text-anchor="middle" font-size="14" font-weight="bold">ESP32</text>
+
+                    <!-- GPIO Pins -->
+                    <circle cx="200" cy="80" r="5" fill="#e74c3c"></circle>
+                    <text x="210" y="85" font-size="10">GPIO13</text>
+
+                    <circle cx="200" cy="120" r="5" fill="#3498db"></circle>
+                    <text x="210" y="125" font-size="10">GPIO5</text>
+
+                    <circle cx="200" cy="160" r="5" fill="#27ae60"></circle>
+                    <text x="210" y="165" font-size="10">RX2 (19)</text>
+
+                    <circle cx="200" cy="200" r="5" fill="#27ae60"></circle>
+                    <text x="210" y="205" font-size="10">TX2 (18)</text>
+
+                    <!-- SOS Button -->
+                    <rect x="300" y="60" width="80" height="40" fill="#e74c3c" stroke="#c0392b" stroke-width="2" rx="3">
+                    </rect>
+                    <text x="340" y="85" text-anchor="middle" fill="white" font-size="12" font-weight="bold">SOS</text>
+                    <line x1="200" y1="80" x2="300" y2="80" stroke="#333" stroke-width="2"></line>
+                    <line x1="340" y1="100" x2="340" y2="130" stroke="#333" stroke-width="2"></line>
+                    <line x1="340" y1="130" x2="125" y2="130" stroke="#333" stroke-width="2"></line>
+                    <text x="320" y="145" font-size="10">GND</text>
+
+                    <!-- LED -->
+                    <circle cx="340" cy="120" r="15" fill="#f39c12" stroke="#e67e22" stroke-width="2"></circle>
+                    <text x="340" y="125" text-anchor="middle" fill="white" font-size="10" font-weight="bold">LED</text>
+                    <line x1="200" y1="120" x2="325" y2="120" stroke="#333" stroke-width="2"></line>
+
+                    <!-- GPS Module -->
+                    <rect x="300" y="160" width="100" height="60" fill="#27ae60" stroke="#229954" stroke-width="2"
+                        rx="3"></rect>
+                    <text x="350" y="185" text-anchor="middle" fill="white" font-size="12" font-weight="bold">GPS</text>
+                    <text x="350" y="200" text-anchor="middle" fill="white" font-size="10">Module</text>
+                    <line x1="200" y1="160" x2="300" y2="175" stroke="#333" stroke-width="2"></line>
+                    <line x1="200" y1="200" x2="300" y2="205" stroke="#333" stroke-width="2"></line>
+                    <text x="250" y="155" font-size="10">TX</text>
+                    <text x="250" y="215" font-size="10">RX</text>
+
+                    <!-- Power -->
+                    <rect x="50" y="270" width="150" height="20" fill="#95a5a6" stroke="#7f8c8d" stroke-width="1"
+                        rx="2"></rect>
+                    <text x="125" y="285" text-anchor="middle" fill="white" font-size="10" font-weight="bold">3.3V Power
+                        Supply</text>
+                </svg>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h2>🔄 Application Flowchart</h2>
+            <div class="callout">
+                <strong>Goal:</strong> This detailed flow illustrates the end-to-end journey from app initialization,
+                continuous background monitoring, to handling emergency events and final incident resolution.
+            </div>
+
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    flowchart TD
+                    %% Node Styling
+                    classDef init fill:#10b981,stroke:#047857,stroke-width:2px,color:#fff,rx:8px
+                    classDef decision fill:#eab308,stroke:#ca8a04,stroke-width:2px,color:#fff,rx:8px
+                    classDef bg fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#fff,rx:8px
+                    classDef emerg fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff,rx:8px
+                    classDef norm fill:#f8fafc,stroke:#94a3b8,stroke-width:2px,color:#333,rx:8px
+                    classDef notif fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff,rx:8px
+
+                    A((Start: App Launch)):::init --> B[Initialize Local State<br>Load Profile & Guardians]:::bg
+                    B --> C{Permissions OK?<br>GPS / Mic / BLE}:::decision
+
+                    C -- No --> C1[Request Permissions<br>Explain Needs]:::norm
+                    C1 --> C
+
+                    C -- Yes --> D[Start Background Services<br>Voice / Location / BLE]:::bg
+
+                    D --> E{Emergency Trigger?}:::decision
+
+                    E -- No --> F[Normal Monitoring<br>Periodic Sync]:::norm
+                    F --> D
+
+                    E -- Yes --> G[Capture Context<br>GPS / Timestamp]:::emerg
+                    G --> H{Optional Evidence?}:::decision
+
+                    H -- Yes --> H1[Capture Media<br>Photos / Audio]:::bg
+                    H -- No --> I
+                    H1 --> I[Build Alert Payload]:::emerg
+
+                    I --> J{Network Available?}:::decision
+
+                    J -- Yes --> K[Send Primary Alert<br>Cloud API]:::emerg
+                    J -- No --> L[Offline Escalation<br>SMS + Voice Call]:::emerg
+
+                    K --> M{Server ACK?}:::decision
+                    M -- No --> N[Retry Policy<br>Backoff & Dedupe]:::bg
+                    N --> J
+
+                    M -- Yes --> O[Persist Incident<br>DB & Storage URLs]:::bg
+                    L --> O
+                    O --> P[Notify Responders<br>Push / Email / Dashboard]:::notif
+
+                    P --> Q{Operator Action}:::decision
+                    Q -- ACK --> R[Mark Acknowledged<br>Start Timer]:::bg
+                    Q -- RESOLVE --> S((Incident Closed)):::init
+
+                    R --> T{Need Escalation?<br>No Response?}:::decision
+                    T -- Yes --> U[Escalate Alert<br>Higher Priority]:::notif
+                    T -- No --> Q
+                    U --> Q
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h2>🔧 Tech Stack components</h2>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h4>📱 Android Architecture</h4>
+                    <ul>
+                        <li><strong>Activities:</strong> 15+ screens serving modular functionalities.</li>
+                        <li><strong>Services:</strong> Persistent Voice, GPS, and BLE listeners.</li>
+                        <li><strong>Receivers:</strong> Bound to system events (SMS readiness, boot up).</li>
+                        <li><strong>WorkManager:</strong> Used for periodic syncing tasks.</li>
+                    </ul>
+                    <div style="margin-top:15px;">
+                        <span class="tag tag-success">Kotlin</span>
+                        <span class="tag tag-success">WorkManager</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4>🧩 Third-Party Integrations</h4>
+                    <ul>
+                        <li><strong>Supabase:</strong> For Database, Auth, Realtime APIs, and Media Storage.</li>
+                        <li><strong>Firebase:</strong> Dedicated to FCM Push Notification pipelines.</li>
+                        <li><strong>Vosk:</strong> Offline embedded Speech Recognition (Wake Word).</li>
+                        <li><strong>Google Maps:</strong> Native map SDK rendering.</li>
+                    </ul>
+                    <div style="margin-top:15px;">
+                        <span class="tag tag-purple">Vosk AI</span>
+                        <span class="tag tag-purple">Supabase</span>
+                        <span class="tag tag-purple">Firebase</span>
+                    </div>
+                </div>
+
+                <div class="card" style="border-left-color: var(--secondary)">
+                    <h4>✨ Core Workflows</h4>
+                    <ul>
+                        <li><strong>Identity:</strong> Splash, Auth Session, Profile Creation.</li>
+                        <li><strong>Monitoring:</strong> Home Dashboard, Status Flags, SOS.</li>
+                        <li><strong>Social/Network:</strong> Add Guardian, Nearby Helpers.</li>
+                    </ul>
+                    <div style="margin-top:15px;">
+                        <span class="tag tag-danger">SOS Workflows</span>
+                        <span class="tag tag-warning">Social Safety</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h2>💰 Operating Cost & Requirements</h2>
+
+            <h3>Estimated Infrastructure Costs</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component / Service</th>
+                        <th>Cost Estimation (INR)</th>
+                        <th>Usage Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Google Play Console</strong></td>
+                        <td>2,500 (one-time)</td>
+                        <td>Developer registration standard fee for the lifetime.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Firebase / FCM</strong></td>
+                        <td>1,500 - 5,000 / mo</td>
+                        <td>Scales with active cloud messaging bandwidth.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Supabase Pro</strong></td>
+                        <td>2,000 - 8,000 / mo</td>
+                        <td>Handles PostgreSQL traffic, Storage buckets, Auth instances.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Google Maps API</strong></td>
+                        <td>1,800 - 7,200 / mo</td>
+                        <td>Tied directly to dynamic map loads and Geocoding APIs.</td>
+                    </tr>
+                    <tr style="background: var(--primary-light);">
+                        <td><strong>Total Average (Monthly)</strong></td>
+                        <td><strong><span style="color:var(--primary-dark)">5,300 - 20,200</span></strong></td>
+                        <td><strong>SaaS dependencies & API billing threshold.</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>User Hardware Benchmarks</h3>
+            <ul style="color: var(--text-muted); padding-left: 20px;">
+                <li><strong>OS Version:</strong> Android 8.0 (API 26) or newer.</li>
+                <li><strong>Memory/Storage:</strong> Min 3GB RAM (4GB desired) / 500MB+ Application space + Cache.</li>
+                <li><strong>Required Nodes:</strong> Dedicated GPS Hardware, active Microphone, BLE Chipset, Camera.
+                </li>
+            </ul>
+        </div>
+
+        <div class="glass-panel">
+            <h2>🚀 Future Scale & Roadmap</h2>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h4>🧠 AI Models Integration</h4>
+                    <ul>
+                        <li><strong>Fall Detection:</strong> Sensor-fusion driven hardware interrupts.</li>
+                        <li><strong>Anomaly Recognition:</strong> ML routines checking unusual geo-patterns.</li>
+                        <li><strong>Voice Stress Analysis:</strong> Inferring emotion mapping from pitch.</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>🔗 Ecosystem Expansion</h4>
+                    <ul>
+                        <li><strong>iOS Native Launch:</strong> Bringing parity to Swift environments.</li>
+                        <li><strong>Wearables:</strong> Tizen / WatchOS / WearOS micro-apps.</li>
+                        <li><strong>Smart City IoT:</strong> Communicating with civic emergency protocols.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timeline Target</th>
+                        <th>Strategic Milestone</th>
+                        <th>Planned Capability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>3-6 Months</strong></td>
+                        <td>Intelligent Triggers</td>
+                        <td>ML Fall detection routines & audio-stress tagging.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>6-12 Months</strong></td>
+                        <td>Ecosystem Launch</td>
+                        <td>Cross-platform sync & primary iOS distribution.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>12-18 Months</strong></td>
+                        <td>B2B Enterprise Branch</td>
+                        <td>Whitelabel safety portals for large industrial campuses.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            <p><strong>VASATEY Public Safety App</strong></p>
+            <p>Version 1.0.0 | Built for Reliability</p>
+            <p>&copy; 2024 SATEY Technologies</p>
+        </footer>
+    </div>
+
+</body>
+
+</html>
