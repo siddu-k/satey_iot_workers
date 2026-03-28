@@ -395,6 +395,7 @@
 
                     CLOUD -->|Realtime Websocket| DASH
                 </div>
+                <button class="download-diagram-btn" style="margin: 10px auto 0; display: block;" data-diagram="architecture">Download as Image</button>
             </div>
 
             <h3>2. Mobile App Internal Architecture</h3>
@@ -421,12 +422,13 @@
                     ENGINE -->|Primary Delivery| CLOUD
                     ENGINE -->|Offline Fallback| LOCAL
                 </div>
+                <button class="download-diagram-btn" style="margin: 10px auto 0; display: block;" data-diagram="mobile-arch">Download as Image</button>
             </div>
 
             <h3>3. Hardware Architecture</h3>
             <p>This diagram represents the physical wiring and components connected to the ESP32 microcontroller.</p>
             <div class="mermaid-container">
-                <svg width="100%" height="450" viewBox="0 0 600 450" style="max-width: 600px;">
+                <svg id="hardware-arch-svg" width="100%" height="450" viewBox="0 0 600 450" style="max-width: 600px;">
                     <!-- New BLE Signal Generator ESP32 -->
                     <rect x="50" y="20" width="150" height="80" fill="#8e44ad" stroke="#71368a" stroke-width="2" rx="5">
                     </rect>
@@ -496,6 +498,7 @@
                     </g>
                 </svg>
             </div>
+            <button class="download-diagram-btn" style="margin: 10px auto 0; display: block;" data-diagram="hardware-arch">Download as Image</button>
         </div>
 
         <div class="glass-panel">
@@ -584,6 +587,7 @@
                     T -- No --> Q
                     U --> Q
                 </div>
+                <button class="download-diagram-btn" style="margin: 10px auto 0; display: block;" data-diagram="flowchart">Download as Image</button>
             </div>
         </div>
 
@@ -742,6 +746,65 @@
             <p>&copy; 2024 SATEY Technologies</p>
         </footer>
     </div>
+    <script>
+    // Download SVG as PNG utility
+    function svgToPngAndDownload(svgElem, filename) {
+        const serializer = new XMLSerializer();
+        let svgString = serializer.serializeToString(svgElem);
+        // Add name space if missing
+        if (!svgString.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
+            svgString = svgString.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+        }
+        // Create image
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = svgElem.viewBox.baseVal ? svgElem.viewBox.baseVal.width : svgElem.width.baseVal.value;
+            canvas.height = svgElem.viewBox.baseVal ? svgElem.viewBox.baseVal.height : svgElem.height.baseVal.value;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+            canvas.toBlob(function(blob) {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }, 'image/png');
+        };
+        img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+    }
+
+    // Attach download handlers after diagrams are rendered
+    document.addEventListener('DOMContentLoaded', function() {
+        function findMermaidSVG(container) {
+            // Mermaid renders SVG inside the container
+            return container.querySelector('svg');
+        }
+        document.querySelectorAll('.download-diagram-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                let svgElem = null;
+                let filename = 'diagram.png';
+                if (btn.dataset.diagram === 'hardware-arch') {
+                    svgElem = document.getElementById('hardware-arch-svg');
+                    filename = 'hardware-architecture.png';
+                } else {
+                    // For mermaid diagrams, find the nearest .mermaid-container and its SVG
+                    const container = btn.closest('.mermaid-container');
+                    svgElem = findMermaidSVG(container);
+                    filename = btn.dataset.diagram + '.png';
+                }
+                if (svgElem) {
+                    svgToPngAndDownload(svgElem, filename);
+                } else {
+                    alert('Diagram not found or not yet rendered.');
+                }
+            });
+        });
+    });
+    </script>
 
 </body>
 

@@ -473,6 +473,7 @@
         <!-- Map Container -->
         <main class="worker-map-container">
             <div class="map" id="workerMap"></div>
+            <div class="map-overlay" id="mapOverlay" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(17,17,17,0.96); z-index: 10; color: #fff; text-align: center; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; pointer-events: none;">No valid location data from devices. Map hidden.</div>
             <div class="sos-strip">
                 <div class="sos-strip-header">Active SOS Devices</div>
                 <div class="sos-strip-list" id="alertsContainer"></div>
@@ -579,6 +580,21 @@
             const container = document.getElementById('alertsContainer');
             const activeSos = allAlerts.filter(alert => alert.status !== 'resolved');
 
+            // Check if any alert has valid coordinates (not 0,0 and not null/undefined)
+            const hasValidCoords = activeSos.some(alert => {
+                const lat = Number(alert.latitude);
+                const lng = Number(alert.longitude);
+                return lat && lng && !(lat === 0 && lng === 0) && !Number.isNaN(lat) && !Number.isNaN(lng);
+            });
+
+            // Toggle map overlay (not map visibility)
+            const mapOverlay = document.getElementById('mapOverlay');
+            if (hasValidCoords) {
+                mapOverlay.style.display = 'none';
+            } else {
+                mapOverlay.style.display = 'flex';
+            }
+
             if (activeSos.length === 0) {
                 container.innerHTML = `<div class="sos-meta" style="padding: 8px 0;">No active SOS alerts.</div>`;
                 updateStats();
@@ -682,9 +698,15 @@
             Object.values(markers).forEach(marker => map.removeLayer(marker));
             markers = {};
 
-            // Add new markers for active alerts
+            // Add new markers for active alerts with valid coordinates
             allAlerts.forEach(alert => {
-                if (alert.status !== 'resolved' && alert.latitude && alert.longitude) {
+                const lat = Number(alert.latitude);
+                const lng = Number(alert.longitude);
+                if (
+                    alert.status !== 'resolved' &&
+                    lat && lng && !(lat === 0 && lng === 0) &&
+                    !Number.isNaN(lat) && !Number.isNaN(lng)
+                ) {
                     const markerColor = alert.status === 'active' ? '#ff4444' : '#ffaa00';
                     const iconHtml = `
                         <div style="
@@ -710,7 +732,7 @@
                         className: 'custom-marker'
                     });
 
-                    const marker = L.marker([alert.latitude, alert.longitude], { icon: customIcon })
+                    const marker = L.marker([lat, lng], { icon: customIcon })
                         .bindPopup(`
                             <div class="alert-popup">
                                 <h3>${alert.worker_details?.full_name}</h3>
