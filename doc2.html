@@ -426,54 +426,74 @@
             <h3>3. Hardware Architecture</h3>
             <p>This diagram represents the physical wiring and components connected to the ESP32 microcontroller.</p>
             <div class="mermaid-container">
-                <svg width="100%" height="300" viewBox="0 0 600 300" style="max-width: 600px;">
-                    <!-- ESP32 -->
-                    <rect x="50" y="50" width="150" height="200" fill="#2c3e50" stroke="#1a252f" stroke-width="2"
-                        rx="5"></rect>
-                    <text x="125" y="40" text-anchor="middle" font-size="14" font-weight="bold">ESP32</text>
-
-                    <!-- GPIO Pins -->
-                    <circle cx="200" cy="80" r="5" fill="#e74c3c"></circle>
-                    <text x="210" y="85" font-size="10">GPIO13</text>
-
-                    <circle cx="200" cy="120" r="5" fill="#3498db"></circle>
-                    <text x="210" y="125" font-size="10">GPIO5</text>
-
-                    <circle cx="200" cy="160" r="5" fill="#27ae60"></circle>
-                    <text x="210" y="165" font-size="10">RX2 (19)</text>
-
-                    <circle cx="200" cy="200" r="5" fill="#27ae60"></circle>
-                    <text x="210" y="205" font-size="10">TX2 (18)</text>
-
-                    <!-- SOS Button -->
-                    <rect x="300" y="60" width="80" height="40" fill="#e74c3c" stroke="#c0392b" stroke-width="2" rx="3">
+                <svg width="100%" height="450" viewBox="0 0 600 450" style="max-width: 600px;">
+                    <!-- New BLE Signal Generator ESP32 -->
+                    <rect x="50" y="20" width="150" height="80" fill="#8e44ad" stroke="#71368a" stroke-width="2" rx="5">
                     </rect>
-                    <text x="340" y="85" text-anchor="middle" fill="white" font-size="12" font-weight="bold">SOS</text>
-                    <line x1="200" y1="80" x2="300" y2="80" stroke="#333" stroke-width="2"></line>
-                    <line x1="340" y1="100" x2="340" y2="130" stroke="#333" stroke-width="2"></line>
-                    <line x1="340" y1="130" x2="125" y2="130" stroke="#333" stroke-width="2"></line>
-                    <text x="320" y="145" font-size="10">GND</text>
+                    <text x="125" y="45" text-anchor="middle" fill="white" font-size="12" font-weight="bold">ESP32 (BLE
+                        Beacon)</text>
+                    <text x="125" y="65" text-anchor="middle" fill="white" font-size="10">Signal Generator</text>
 
-                    <!-- LED -->
-                    <circle cx="340" cy="120" r="15" fill="#f39c12" stroke="#e67e22" stroke-width="2"></circle>
-                    <text x="340" y="125" text-anchor="middle" fill="white" font-size="10" font-weight="bold">LED</text>
-                    <line x1="200" y1="120" x2="325" y2="120" stroke="#333" stroke-width="2"></line>
+                    <!-- Wireless signal lines pointing down -->
+                    <path d="M 125 110 Q 140 120 125 130 Q 110 140 125 150" fill="none" stroke="#3498db"
+                        stroke-width="2" stroke-dasharray="4,4"></path>
+                    <circle cx="125" cy="155" r="3" fill="#3498db"></circle>
+                    <text x="145" y="135" font-size="10" fill="#3498db">BLE Signal</text>
 
-                    <!-- GPS Module -->
-                    <rect x="300" y="160" width="100" height="60" fill="#27ae60" stroke="#229954" stroke-width="2"
-                        rx="3"></rect>
-                    <text x="350" y="185" text-anchor="middle" fill="white" font-size="12" font-weight="bold">GPS</text>
-                    <text x="350" y="200" text-anchor="middle" fill="white" font-size="10">Module</text>
-                    <line x1="200" y1="160" x2="300" y2="175" stroke="#333" stroke-width="2"></line>
-                    <line x1="200" y1="200" x2="300" y2="205" stroke="#333" stroke-width="2"></line>
-                    <text x="250" y="155" font-size="10">TX</text>
-                    <text x="250" y="215" font-size="10">RX</text>
+                    <g transform="translate(0, 150)">
+                        <!-- ESP32 -->
+                        <rect x="50" y="50" width="150" height="200" fill="#2c3e50" stroke="#1a252f" stroke-width="2"
+                            rx="5"></rect>
+                        <text x="125" y="40" text-anchor="middle" font-size="14" font-weight="bold">ESP32</text>
 
-                    <!-- Power -->
-                    <rect x="50" y="270" width="150" height="20" fill="#95a5a6" stroke="#7f8c8d" stroke-width="1"
-                        rx="2"></rect>
-                    <text x="125" y="285" text-anchor="middle" fill="white" font-size="10" font-weight="bold">3.3V Power
-                        Supply</text>
+                        <!-- GPIO Pins -->
+                        <circle cx="200" cy="80" r="5" fill="#e74c3c"></circle>
+                        <text x="210" y="85" font-size="10">GPIO13</text>
+
+                        <circle cx="200" cy="120" r="5" fill="#3498db"></circle>
+                        <text x="210" y="125" font-size="10">GPIO5</text>
+
+                        <circle cx="200" cy="160" r="5" fill="#27ae60"></circle>
+                        <text x="210" y="165" font-size="10">RX2 (19)</text>
+
+                        <circle cx="200" cy="200" r="5" fill="#27ae60"></circle>
+                        <text x="210" y="205" font-size="10">TX2 (18)</text>
+
+                        <!-- SOS Button -->
+                        <rect x="300" y="60" width="80" height="40" fill="#e74c3c" stroke="#c0392b" stroke-width="2"
+                            rx="3">
+                        </rect>
+                        <text x="340" y="85" text-anchor="middle" fill="white" font-size="12"
+                            font-weight="bold">SOS</text>
+                        <line x1="200" y1="80" x2="300" y2="80" stroke="#333" stroke-width="2"></line>
+                        <line x1="340" y1="100" x2="340" y2="130" stroke="#333" stroke-width="2"></line>
+                        <line x1="340" y1="130" x2="125" y2="130" stroke="#333" stroke-width="2"></line>
+                        <text x="320" y="145" font-size="10">GND</text>
+
+                        <!-- LED -->
+                        <circle cx="340" cy="120" r="15" fill="#f39c12" stroke="#e67e22" stroke-width="2"></circle>
+                        <text x="340" y="125" text-anchor="middle" fill="white" font-size="10"
+                            font-weight="bold">LED</text>
+                        <line x1="200" y1="120" x2="325" y2="120" stroke="#333" stroke-width="2"></line>
+
+                        <!-- GPS Module -->
+                        <rect x="300" y="160" width="100" height="60" fill="#27ae60" stroke="#229954" stroke-width="2"
+                            rx="3"></rect>
+                        <text x="350" y="185" text-anchor="middle" fill="white" font-size="12"
+                            font-weight="bold">GPS</text>
+                        <text x="350" y="200" text-anchor="middle" fill="white" font-size="10">Module</text>
+                        <line x1="200" y1="160" x2="300" y2="175" stroke="#333" stroke-width="2"></line>
+                        <line x1="200" y1="200" x2="300" y2="205" stroke="#333" stroke-width="2"></line>
+                        <text x="250" y="155" font-size="10">TX</text>
+                        <text x="250" y="215" font-size="10">RX</text>
+
+                        <!-- Power -->
+                        <rect x="50" y="270" width="150" height="20" fill="#95a5a6" stroke="#7f8c8d" stroke-width="1"
+                            rx="2"></rect>
+                        <text x="125" y="285" text-anchor="middle" fill="white" font-size="10" font-weight="bold">3.3V
+                            Power
+                            Supply</text>
+                    </g>
                 </svg>
             </div>
         </div>
@@ -485,9 +505,35 @@
                 continuous background monitoring, to handling emergency events and final incident resolution.
             </div>
 
-            <div class="mermaid-container">
+            <style>
+                @media print {
+                    @page {
+                        size: landscape;
+                    }
+
+                    .landscape-print-view {
+                        width: 100% !important;
+                        border: none !important;
+                        box-shadow: none !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
+
+                    body {
+                        background: white;
+                    }
+
+                    .glass-panel {
+                        box-shadow: none;
+                        border: none;
+                        padding: 0;
+                        background: none;
+                    }
+                }
+            </style>
+            <div class="mermaid-container landscape-print-view" style="overflow-x: auto; width: 100%;">
                 <div class="mermaid">
-                    flowchart TD
+                    flowchart LR
                     %% Node Styling
                     classDef init fill:#10b981,stroke:#047857,stroke-width:2px,color:#fff,rx:8px
                     classDef decision fill:#eab308,stroke:#ca8a04,stroke-width:2px,color:#fff,rx:8px
